@@ -1,13 +1,21 @@
 package hello.security.config;
 
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
 @EnableWebSecurity//스프링 시큐리티 필터(아래의 SecurityConfig 클래스)가 스프링 필터 체인에 등록됨
 @Configuration
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    @Bean
+    public BCryptPasswordEncoder encodePwd(){
+        return new BCryptPasswordEncoder();
+    }
+
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -19,6 +27,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .anyRequest().permitAll()//위의 antMatchers들을 제외하고 나머지 경로는 접근 허용
                 .and()
                 .formLogin()
-                .loginPage("/login");//권한이 없는 사람이 권한이 필요한 요청을 하면 login으로 보내버림
+                .loginPage("/loginForm");//권한이 없는 사람이 권한이 필요한 요청을 하면 login으로 보내버림
     }
 }
+
+
