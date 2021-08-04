@@ -13,8 +13,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 
 import java.util.ArrayList;
 import java.util.Collection;
-
-public class PrincipalDetails implements UserDetails{
+//principal-접근주체
+public class PrincipalDetails implements UserDetails{//접근주체를 구체화한다.
 
     private User user;//콤포지션
     public PrincipalDetails(User user){
@@ -25,12 +25,14 @@ public class PrincipalDetails implements UserDetails{
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         Collection<GrantedAuthority> collect = new ArrayList<>();
-        collect.add(new GrantedAuthority() {
-            @Override
-            public String getAuthority() {
-                return user.getRole();
-            }
-        });
+//        collect.add(new GrantedAuthority() {
+//            @Override
+//            public String getAuthority() {
+//                return user.getRole();
+//            }
+//        });
+        //위의 6줄 자리와 같음
+        collect.add(()->{return user.getRole();});
         return collect;
     }
 

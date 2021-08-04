@@ -1,21 +1,36 @@
 package hello.security.config;
 
+import hello.security.config.auth.PrincipalDetailsService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 
+@RequiredArgsConstructor
 @EnableWebSecurity//스프링 시큐리티 필터(아래의 SecurityConfig 클래스)가 스프링 필터 체인에 등록됨
 @Configuration
+//@EnableGlobalMethodSecurity:: securedEnabled = true : secure어노테이션 활성화, prePostEnabled = true : preAuthorize어노테이션 활성화
+@EnableGlobalMethodSecurity(securedEnabled = true, prePostEnabled = true)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
+
+    private final PrincipalDetailsService principalDetailsService;
 
     @Bean
     public BCryptPasswordEncoder encodePwd(){
         return new BCryptPasswordEncoder();
     }
 
+    //시큐리티가 대신 로그인 해주는데, 그때 물론 password가 필요함.
+    //근데 password가 뭘로 해쉬되었는 알아야 스프링이 해쉬화를 통해 회원가입을 해줄 수 있음
+    @Override
+    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        auth.userDetailsService(principalDetailsService).passwordEncoder(encodePwd());
+    }//principalDetailsService를 안넣어주면 패스워드 비교를 못한다.
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
