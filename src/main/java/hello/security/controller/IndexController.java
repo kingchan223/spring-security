@@ -26,7 +26,8 @@ public class IndexController {
 
     @GetMapping
     public String index(@AuthenticationPrincipal PrincipalDetails principal){
-        log.info("로그인 사용자 ID:{}", principal.getUsername());
+        if(principal!=null)
+            log.info("로그인 사용자 ID:{}", principal.getUsername());
         return "index";
     }
 

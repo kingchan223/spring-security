@@ -1,6 +1,7 @@
 package hello.security.config;
 
 import hello.security.config.auth.PrincipalDetailsService;
+import hello.security.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
+    private final PrincipalOauth2UserService principalOauth2UserService;
 
     @Bean
     public BCryptPasswordEncoder encodePwd(){
@@ -45,7 +47,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .loginPage("/loginForm")//권한이 없는 사람이 권한이 필요한 요청을 하면 login으로 보내버림
                 .usernameParameter("username")//PrincipalDetailsService의 username과 일치하는지 확인
                 .loginProcessingUrl("/login")// : '/login'이 호출이 되면 시큐리티가 낚아채서 대신 로그인을 진행해준다.
-                .defaultSuccessUrl("/");//로그인에 성공하면 '/'로 이동한다.(그외로 요청했으면 로그인 후 거기로 보내준다.)
+                .defaultSuccessUrl("/")//로그인에 성공하면 '/'로 이동한다.(그외로 요청했으면 로그인 후 거기로 보내준다.)
+                .and()
+                .oauth2Login()
+                .loginPage("/loginForm")//구글 로그인이 완료된 후의 처리가 필요. 1.코드 받기(인증) 2.엑세스 토큰(권한) 3.사용자 프로필 정보 가져옴 4.그 정보로 회원가입 자동으로 시키기도함 또는 더 추가적인 정보를 얻고
+                .userInfoEndpoint()                       // 구글 로그인이 완료되면 코드를 받는 것이 아니라 <액세스 토큰+사용사 프로필 정보>를 한방에 받는다.
+                .userService(principalOauth2UserService);
     }
 }
 
