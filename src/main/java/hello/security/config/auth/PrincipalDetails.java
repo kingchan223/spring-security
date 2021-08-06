@@ -8,18 +8,26 @@ package hello.security.config.auth;
 // :: Security Session => Authentication => UserDetails(PrincipalDetails)
 
 import hello.security.model.User;
+import lombok.Data;
+import lombok.Getter;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Map;
+
+@Data
 //principal-접근주체
-public class PrincipalDetails implements UserDetails{//접근주체를 구체화한다.
+public class PrincipalDetails implements UserDetails, OAuth2User {//접근주체를 구체화한다.
 
     private User user;//콤포지션
     public PrincipalDetails(User user){
         this.user = user;
     }
+
+    /* UserDetails */
 
     //해당 User의 권한을 반환하는 곳
     @Override
@@ -66,5 +74,17 @@ public class PrincipalDetails implements UserDetails{//접근주체를 구체화
         //1년 동안 로그인 안한 회원이 있다면 휴먼 계정으로 변경
         //현재 시간 - 로그인 시간
         return true;
+    }
+
+    /* OAuth2User */
+
+    @Override
+    public Map<String, Object> getAttributes() {
+        return null;
+    }
+
+    @Override
+    public String getName() {
+        return null;
     }
 }

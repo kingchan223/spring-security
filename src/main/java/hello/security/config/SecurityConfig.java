@@ -22,7 +22,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
     private final PrincipalOauth2UserService principalOauth2UserService;
-    private final CustomAuthenticationProvider authProvider;
+//    private final CustomAuthenticationProvider authProvider;
 
 
     @Bean
@@ -35,7 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(principalDetailsService).passwordEncoder(encodePwd());
-        auth.authenticationProvider(authProvider);
+//        auth.authenticationProvider(authProvider);
     }//principalDetailsService를 안넣어주면 패스워드 비교를 못한다.
 
     @Override
@@ -54,8 +54,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .defaultSuccessUrl("/")//로그인에 성공하면 '/'로 이동한다.(그외로 요청했으면 로그인 후 거기로 보내준다.)
                 .and()
                 .oauth2Login()
-                .loginPage("/loginForm")//구글 로그인이 완료된 후의 처리가 필요. 1.코드 받기(인증) 2.엑세스 토큰(권한) 3.사용자 프로필 정보 가져옴 4.그 정보로 회원가입 자동으로 시키기도함 또는 더 추가적인 정보를 얻고
-                .userInfoEndpoint()                       // 구글 로그인이 완료되면 코드를 받는 것이 아니라 <액세스 토큰+사용사 프로필 정보>를 한방에 받는다.
+                .loginPage("/loginForm")//구글 로그인이 완료된 후의 처리가 필요.
+                // 1.코드 받기(인증됨)
+                // 2.엑세스 토큰(권한)
+                // 3.사용자 프로필 정보 가져옴
+                // 4.그 정보로 회원가입 자동으로 시키기도함 또는 더 추가적인 정보를 얻고
+                .userInfoEndpoint()    // Tip: 사실 구글 로그인이 완료되면 코드를 받는 것이 아니라 <액세스 토큰+사용사 프로필 정보>를 한방에 받는다.
                 .userService(principalOauth2UserService);
     }
 }

@@ -10,7 +10,9 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -27,10 +29,33 @@ public class IndexController {
 
     @ResponseBody
     @GetMapping("/test/login")
-    public String loginTest(Authentication authentication){
-        System.out.println("/test/login ==============");
-        System.out.println("authentication = " + authentication.getPrincipal());
+    public String loginTest(Authentication authentication,
+                            @AuthenticationPrincipal PrincipalDetails userDetails){
+        //User 객체를 얻는 방법 1. : Authentication 의존성 주입 받기
+        PrincipalDetails principalDetails = (PrincipalDetails)authentication.getPrincipal();
+        System.out.println("authentication = " + principalDetails.getUser());
+
+        //User 객체를 얻는 방법 2. : @AuthenticationPrincipal 어노테이션사용
+        System.out.println("userDetails = " + userDetails.getUser());
+
+
         return "세션 정보 확인하기";
+    }
+
+    @ResponseBody
+    @GetMapping("/test/oauth/login")
+    public String loginOauthTest(Authentication authentication,
+                                 @AuthenticationPrincipal OAuth2User oauth){
+
+        //OAuth에서 User 객체를 얻는 방법 1. : Authentication 의존성 주입 받기
+        /* Oauth는 OAuth2User 타입으로 다운 캐스팅 해줘야한다. */
+        OAuth2User oauth2User = (OAuth2User)authentication.getPrincipal();
+        System.out.println("authentication = " + oauth2User.getAttributes());
+
+        //OAuth에서 User 객체를 얻는 방법 2. : @AuthenticationPrincipal 사용
+        System.out.println("oauth = " + oauth.getAttributes());
+
+        return "OAuth 세션 정보 확인하기";
     }
 
     @GetMapping
