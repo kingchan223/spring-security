@@ -1,5 +1,6 @@
 package hello.security.config;
 
+import hello.security.config.auth.CustomAuthenticationProvider;
 import hello.security.config.auth.PrincipalDetailsService;
 import hello.security.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +22,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
     private final PrincipalOauth2UserService principalOauth2UserService;
+    private final CustomAuthenticationProvider authProvider;
+
 
     @Bean
     public BCryptPasswordEncoder encodePwd(){
@@ -32,6 +35,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.userDetailsService(principalDetailsService).passwordEncoder(encodePwd());
+        auth.authenticationProvider(authProvider);
     }//principalDetailsService를 안넣어주면 패스워드 비교를 못한다.
 
     @Override

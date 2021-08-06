@@ -63,10 +63,8 @@ public class PrincipalDetails implements UserDetails{//접근주체를 구체화
 
     @Override
     public boolean isEnabled() {
-
         //1년 동안 로그인 안한 회원이 있다면 휴먼 계정으로 변경
         //현재 시간 - 로그인 시간
-
         return true;
     }
 }
