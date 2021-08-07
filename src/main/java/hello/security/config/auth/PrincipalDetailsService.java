@@ -19,7 +19,9 @@ public class PrincipalDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
 
-    @Override//요 아래에 username이랑 html form post에서 보내지는 username이랑 일치해야한다.
+    // 요 아래에 username이랑 html form post에서 보내지는 username이랑 일치해야한다.
+    //함수 종료시 @AuthenticationPrincipal 어노테이션이 만들어진다.
+    @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
         User userEntity = userRepository.findByUsername(username)
                 .orElseThrow(()->{return new UsernameNotFoundException("해당 사용자를 찾을 수 없습니다. :"+username);});

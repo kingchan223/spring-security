@@ -1,10 +1,8 @@
 package hello.security.config;
 
-import hello.security.config.auth.CustomAuthenticationProvider;
 import hello.security.config.auth.PrincipalDetailsService;
 import hello.security.config.oauth.PrincipalOauth2UserService;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
@@ -22,19 +20,19 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private final PrincipalDetailsService principalDetailsService;
     private final PrincipalOauth2UserService principalOauth2UserService;
-//    private final CustomAuthenticationProvider authProvider;
+    private final BCryptPasswordEncoder bCryptPasswordEncoder;
 
-
-    @Bean
-    public BCryptPasswordEncoder encodePwd(){
-        return new BCryptPasswordEncoder();
-    }
+//    @Scope("prototype")
+//    @Bean
+//    public BCryptPasswordEncoder encodePwd(){
+//        return new BCryptPasswordEncoder();
+//    }
 
     //시큐리티가 대신 로그인 해주는데, 그때 물론 password가 필요함.
     //근데 password가 뭘로 해쉬되었는 알아야 스프링이 해쉬화를 통해 회원가입을 해줄 수 있음
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.userDetailsService(principalDetailsService).passwordEncoder(encodePwd());
+        auth.userDetailsService(principalDetailsService).passwordEncoder(bCryptPasswordEncoder);
 //        auth.authenticationProvider(authProvider);
     }//principalDetailsService를 안넣어주면 패스워드 비교를 못한다.
 
@@ -55,6 +53,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .and()
                 .oauth2Login()
                 .loginPage("/loginForm")//구글 로그인이 완료된 후의 처리가 필요.
+                .defaultSuccessUrl("/user")
                 // 1.코드 받기(인증됨)
                 // 2.엑세스 토큰(권한)
                 // 3.사용자 프로필 정보 가져옴

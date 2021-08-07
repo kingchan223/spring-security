@@ -23,9 +23,19 @@ import java.util.Map;
 public class PrincipalDetails implements UserDetails, OAuth2User {//접근주체를 구체화한다.
 
     private User user;//콤포지션
+    private Map<String, Object> attributes;
+
+    //OAuth 로그인 생성자
+    public PrincipalDetails(User user,  Map<String, Object> attributes){
+        this.user = user;
+        this.attributes = attributes;
+    }
+
+    //일반 로그인 생성자
     public PrincipalDetails(User user){
         this.user = user;
     }
+
 
     /* UserDetails */
 
@@ -76,15 +86,26 @@ public class PrincipalDetails implements UserDetails, OAuth2User {//접근주체
         return true;
     }
 
-    /* OAuth2User */
+
+    ///* OAuth2User *///
+
+    // Attributes:
+    // {sub=105305243622138993295,(구글의 pk)
+    // name=이찬영,
+    // given_name=찬영,
+    // family_name=이,
+    // picture=https://lh3.googleusercontent.com/a/AATXAJx0fEwo8Hasr0xU5Uoh5RCTSVnTFMxQCx9n7ttn=s96-c,
+    // email=kingchan02230@gmail.com,
+    // email_verified=true,
+    // locale=ko}
 
     @Override
     public Map<String, Object> getAttributes() {
-        return null;
+        return attributes;
     }
 
     @Override
     public String getName() {
-        return null;
+        return (String) attributes.get("sub");
     }
 }
